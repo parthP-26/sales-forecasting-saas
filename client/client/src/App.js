@@ -12,7 +12,7 @@ function App() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await axios.post("https://web-production-94ee7.up.railway.app/upload", formData);
+    const res = await axios.post(`${API}/upload`, formData);
     console.log(res.data);
     alert("Uploaded✅");
   } catch(err){
@@ -22,7 +22,7 @@ function App() {
   };
 
   const getForecast = async () => {
-    const res = await axios.get("https://web-production-94ee7.up.railway.app/forecast");
+    const res = await axios.get(`${API}/forecast`);
     setData(res.data);
   };
 
