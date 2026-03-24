@@ -1,29 +1,38 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const API = "https://sales-forecasting-saas.onrender.com";
+const API = "https://sales-forecasting-saas.onrender.com"; 
 
 function App() {
   const [file, setFile] = useState(null);
   const [data, setData] = useState([]);
 
   const uploadFile = async () => {
-    try{
-    const formData = new FormData();
-    formData.append("file", file);
+    if (!file) {
+      alert("Please select a file");
+      return;
+    }
 
-    const res = await axios.post(`${API}/upload`, formData);
-    console.log(res.data);
-    alert("Uploaded✅");
-  } catch(err){
-    console.error(err);
-    alert("Upload failed❌");
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      await axios.post(`${API}/upload`, formData);
+      alert("Uploaded ✅");
+    } catch (err) {
+      console.log(err); // ✅ fixed
+      alert("Upload failed ❌");
     }
   };
 
   const getForecast = async () => {
-    const res = await axios.get(`${API}/forecast`);
-    setData(res.data);
+    try {
+      const res = await axios.get(`${API}/forecast`);
+      setData(res.data);
+    } catch (err) {
+      console.log(err);
+      alert("Forecast failed ❌");
+    }
   };
 
   return (
@@ -31,9 +40,12 @@ function App() {
       <h1>Sales Forecast</h1>
 
       <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-      <button onClick={uploadFile}>Upload</button>
+      <br /><br />
 
-      <button onClick={getForecast}>Forecast</button>
+      <button onClick={uploadFile}>Upload</button>
+      <button onClick={getForecast} style={{ marginLeft: 10 }}>
+        Forecast
+      </button>
 
       <ul>
         {data.map((item, i) => (
