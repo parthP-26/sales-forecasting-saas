@@ -12,34 +12,47 @@ app.use(express.json());
 
 const upload = multer({ dest: "uploads/" });
 
-// 🚀 Upload + Forecast together
-app.post("/upload", upload.single("file"), (req, res) => {
-  let salesData = [];
+app.post("/upload", upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded");
+    }
 
-  fs.createReadStream(req.file.path)
-    .pipe(csv())
-    .on("data", (row) => {
-      salesData.push({
-        date: row.date,
-        sales: parseFloat(row.sales),
-      });
-    })
-    .on("end", async () => {
-      try {
-        console.log("Data sent to ML:", salesData);
+    let salesData = [];
 
-        const response = await axios.post(
-          `${process.env.ML_API_URL}/forecast`,
-          { data: salesData },
-          { timeout: 10000 }
-        );
-
-        res.json(response.data);
-      } catch (err) {
-        console.error("ML error:", err.message);
-        res.status(500).send("Error forecasting");
-      }
+    await new Promise((resolve, reject) => {
+      fs.createReadStream(req.file.path)
+        .pipe(csv())
+        .on("data", (row) => {
+          if (row.date && row.sales) {
+            salesData.push({
+              date: row.date,
+              sales: parseFloat(row.sales),
+            });
+          }
+        })
+        .on("end", resolve)
+        .on("error", reject);
     });
+
+    console.log("Parsed Data:", salesData);
+
+    if (salesData.length === 0) {
+      return res.status(400).send("CSV parsing failed or empty data");
+    }
+
+    const response = await axios.post(
+      `${process.env.ML_API_URL}/forecast`,
+      { data: salesData },
+      { timeout: 20000 }
+    );
+
+    res.json(response.data);
+
+  } catch (err) {
+    console.error("UPLOAD ERROR:", err.message);
+    res.status(500).send("Server Error");
+  }
 });
 
 const PORT = process.env.PORT || 4000;
