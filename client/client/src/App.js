@@ -16,7 +16,7 @@ function App() {
     console.log(res.data);
     alert("Uploaded✅");
   } catch(err){
-    onsole.error(err);
+    console.error(err);
     alert("Upload failed❌");
     }
   };
