@@ -1,3 +1,9 @@
 node_modules
 .env
 __pycache__
+<<<<<<< HEAD
+=======
+dist
+build
+uploads
+>>>>>>> d656e80ad0142869563fe911a131ea4e27f469c1

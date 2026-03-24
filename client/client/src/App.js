@@ -1,20 +1,28 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const API = "https://sales-forecasting-saas.onrender.com";
+
 function App() {
   const [file, setFile] = useState(null);
   const [data, setData] = useState([]);
 
   const uploadFile = async () => {
+    try{
     const formData = new FormData();
     formData.append("file", file);
 
-    await axios.post("http://localhost:4000/upload", formData);
-    alert("Uploaded");
+    const res = await axios.post("https://web-production-94ee7.up.railway.app/upload", formData);
+    console.log(res.data);
+    alert("Uploaded✅");
+  } catch(err){
+    onsole.error(err);
+    alert("Upload failed❌");
+    }
   };
 
   const getForecast = async () => {
-    const res = await axios.get("http://localhost:4000/forecast");
+    const res = await axios.get("https://web-production-94ee7.up.railway.app/forecast");
     setData(res.data);
   };
 

@@ -26,16 +26,21 @@ app.post("/upload", upload.single("file"), (req, res) => {
       });
     })
     .on("end", () => {
-      res.json({ message: "Uploaded" });
+      res.json({ message: "Uploaded successfully" });
     });
 });
 
 // Forecast
 app.get("/forecast", async (req, res) => {
-  const response = await axios.post("http://localhost:5000/forecast", {
-    data: salesData,
-  });
-  res.json(response.data);
+  try {
+    const response = await axios.post(`${process.env.ML_API_URL}/forecast`, {
+      data: salesData,
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).send("Error forecasting");
+  }
 });
 
-app.listen(4000, () => console.log("Server running on 4000"));
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log("Server running on port", PORT));
