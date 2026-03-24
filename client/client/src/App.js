@@ -17,21 +17,13 @@ function App() {
       const formData = new FormData();
       formData.append("file", file);
 
-      await axios.post(`${API}/upload`, formData);
-      alert("Uploaded ✅");
-    } catch (err) {
-      console.log(err); // ✅ fixed
-      alert("Upload failed ❌");
-    }
-  };
+      const res = await axios.post(`${API}/upload`, formData);
 
-  const getForecast = async () => {
-    try {
-      const res = await axios.get(`${API}/forecast`);
       setData(res.data);
+      alert("Forecast Ready ✅");
     } catch (err) {
-      console.log(err);
-      alert("Forecast failed ❌");
+      console.error(err);
+      alert("Upload/Forecast failed ❌");
     }
   };
 
@@ -42,10 +34,7 @@ function App() {
       <input type="file" onChange={(e) => setFile(e.target.files[0])} />
       <br /><br />
 
-      <button onClick={uploadFile}>Upload</button>
-      <button onClick={getForecast} style={{ marginLeft: 10 }}>
-        Forecast
-      </button>
+      <button onClick={uploadFile}>Upload & Forecast</button>
 
       <ul>
         {data.map((item, i) => (
