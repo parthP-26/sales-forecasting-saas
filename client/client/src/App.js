@@ -19,7 +19,9 @@ function App() {
 
       const res = await axios.post(`${API}/upload`, formData);
 
+      console.log("Forecast data:", res.data);
       setData(res.data);
+
       alert("Forecast Ready ✅");
     } catch (err) {
       console.error(err);
@@ -39,7 +41,7 @@ function App() {
       <ul>
         {data.map((item, i) => (
           <li key={i}>
-            {item.ds} → {item.yhat}
+            {new Date(item.ds).toLocaleDateString()} → {Math.round(item.yhat)}
           </li>
         ))}
       </ul>
