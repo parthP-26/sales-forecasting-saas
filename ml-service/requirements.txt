@@ -1,0 +1,6 @@
+flask
+pandas
+prophet
+statsmodels
+scikit-learn
+gunicorn
