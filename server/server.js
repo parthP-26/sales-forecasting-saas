@@ -23,7 +23,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     await new Promise((resolve, reject) => {
       fs.createReadStream(req.file.path)
         .pipe(csv())
-        .on("data", (row) => {
+        .on("data", (row) => {console.log("ROW:", row);
           if (row.date && row.sales) {
             salesData.push({
               date: row.date,
