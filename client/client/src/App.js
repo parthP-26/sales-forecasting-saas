@@ -90,7 +90,7 @@ function App() {
         </div>
 
         {/* 🧾 MAIN CONTENT */}
-        <div className="flex-1 p-6 bg-gradient-to-br from-blue-100 via-white to-blue-200 dark:from-gray-900 dark:to-gray-800">
+        <div className="flex-1 p-6 bg-gradient-to-br from-blue-100 via-white to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-black dark:text-white>
 
           {/* HEADER */}
           <motion.h1
