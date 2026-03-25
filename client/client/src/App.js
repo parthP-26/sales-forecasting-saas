@@ -62,20 +62,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div>
-    <motion.h1
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ duration: 1 }}
-    >
-      TEST ANIMATION
-    </motion.h1>
-  </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 p-6">
 
       {/* Header */}
       <motion.h1
-        initial={{ opacity: 0, y: -50 }}
+        initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
         className="text-4xl font-bold text-center text-blue-600 mb-8"
@@ -86,24 +77,24 @@ function App() {
       {/* Upload Card */}
 
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="max-w-md mx-auto bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg"
+        className="max-w-md mx-auto bg-white/60 backdrop-blur-lg p-6 rounded-2xl shadow-xl border border-white/30"
       >
         <input
           type="file"
           onChange={(e) => setFile(e.target.files[0])}
-          className="mb-4 w-full"
+          className="mb-4 w-full p-2 border rounded-lg"
         />
 
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          animate={{ y: [0, -5, 0] }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          animate={{ y: [0, -4, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
           onClick={uploadFile}
-          className="w-full bg-blue-500 text-white py-2 rounded-lg"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg shadow-md hover:bg-blue-600"
         >
           Upload & Forecast
         </motion.button>
@@ -111,10 +102,15 @@ function App() {
 
       {/* Chart */}
       {data.length > 0 && (
-        <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">
-          <Line data={chartData} />
-        </div>
-      )}
+  <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="max-w-4xl mx-auto mt-10 bg-white/60 backdrop-blur-lg p-6 rounded-2xl shadow-xl"
+      >
+        <Line data={chartData} />
+      </motion.div>
+    )}
 
     </div>
   );
