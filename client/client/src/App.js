@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -11,6 +12,8 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+
+console.log("App loaded");
 
 ChartJS.register(
   LineElement,
@@ -60,27 +63,51 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
+      <div>
+    <motion.h1
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 1 }}
+    >
+      TEST ANIMATION
+    </motion.h1>
+  </div>
 
       {/* Header */}
-      <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">
+      <motion.h1
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        className="text-4xl font-bold text-center text-blue-600 mb-8"
+      >
         📊 Sales Forecast Dashboard
-      </h1>
+      </motion.h1>
 
       {/* Upload Card */}
-      <div className="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-md">
+
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-md mx-auto bg-white/70 backdrop-blur-lg p-6 rounded-2xl shadow-lg"
+      >
         <input
           type="file"
           onChange={(e) => setFile(e.target.files[0])}
           className="mb-4 w-full"
         />
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          animate={{ y: [0, -5, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
           onClick={uploadFile}
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg"
         >
           Upload & Forecast
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {/* Chart */}
       {data.length > 0 && (
