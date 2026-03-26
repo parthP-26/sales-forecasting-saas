@@ -59,20 +59,25 @@ function App() {
     }
   };
 
-  const chartData = {
-    labels: data.map((item) =>
-      new Date(item.ds).toLocaleDateString()
-    ),
-    datasets: [
-      {
-        label: "Sales Forecast",
-        data: data.map((item) => Math.round(item.yhat)),
-        borderColor: "#2563eb",
-        backgroundColor: "#93c5fd",
-        tension: 0.4,
-      },
-    ],
-  };
+const chartData = {
+  labels:
+    data && Object.keys(data).length > 0
+      ? data[Object.keys(data)[0]].map((item) =>
+          new Date(item.ds).toLocaleDateString()
+        )
+      : [],
+  datasets:
+    data && Object.keys(data).length > 0
+      ? Object.keys(data).map((product, index) => ({
+          label: product,
+          data: data[product].map((item) =>
+            Math.round(item.yhat)
+          ),
+          borderColor: ["#2563eb", "#16a34a", "#dc2626"][index % 3],
+          tension: 0.4,
+        }))
+      : [],
+};
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-black dark:text-white transition-all duration-500">
