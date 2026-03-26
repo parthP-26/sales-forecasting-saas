@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import {
@@ -12,8 +12,6 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-
-console.log("UPDATED APP RUNNING 🚀");
 
 ChartJS.register(
   LineElement,
@@ -32,6 +30,15 @@ function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
+  // 🌙 DARK MODE HANDLER
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
 
   const uploadFile = async () => {
     if (!file) return alert("Select a file");
@@ -68,80 +75,78 @@ function App() {
   };
 
   return (
-    <div className={darkMode ? "dark" : ""}>
-      <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-black dark:text-white transition-all duration-500">
 
-        {/* 🌙 DARK MODE BUTTON */}
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="absolute top-4 right-4 bg-gray-800 text-white px-3 py-1 rounded-lg"
+      {/* 🌙 DARK MODE BUTTON */}
+      <button
+        onClick={() => setDarkMode(!darkMode)}
+        className="absolute top-4 right-4 bg-gray-800 text-white px-3 py-1 rounded-lg"
+      >
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+      </button>
+
+      {/* 📊 SIDEBAR */}
+      <div className="w-64 bg-blue-600 text-white p-6">
+        <h2 className="text-xl font-bold mb-6">Dashboard</h2>
+        <ul className="space-y-3">
+          <li className="hover:bg-blue-500 p-2 rounded">📊 Forecast</li>
+          <li className="hover:bg-blue-500 p-2 rounded">📁 Upload</li>
+          <li className="hover:bg-blue-500 p-2 rounded">⚙️ Settings</li>
+        </ul>
+      </div>
+
+      {/* 🧾 MAIN CONTENT */}
+      <div className="flex-1 p-6">
+
+        {/* HEADER */}
+        <motion.h1
+          initial={{ opacity: 0, y: -40 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl font-bold text-blue-600 mb-8 text-center"
         >
-          {darkMode ? "☀️ Light" : "🌙 Dark"}
-        </button>
+          📊 Sales Forecast Dashboard
+        </motion.h1>
 
-        {/* 📊 SIDEBAR */}
-        <div className="w-64 bg-blue-600 text-white p-6">
-          <h2 className="text-xl font-bold mb-6">Dashboard</h2>
-          <ul className="space-y-3">
-            <li className="hover:bg-blue-500 p-2 rounded">📊 Forecast</li>
-            <li className="hover:bg-blue-500 p-2 rounded">📁 Upload</li>
-            <li className="hover:bg-blue-500 p-2 rounded">⚙️ Settings</li>
-          </ul>
-        </div>
+        {/* UPLOAD CARD */}
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl"
+        >
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="mb-4 w-full p-2 border rounded-lg"
+          />
 
-        {/* 🧾 MAIN CONTENT */}
-        <div className="flex-1 p-6 bg-gradient-to-br from-blue-100 via-white to-blue-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-black dark:text-white>
-
-          {/* HEADER */}
-          <motion.h1
-            initial={{ opacity: 0, y: -40 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-bold text-blue-600 mb-8 text-center"
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={uploadFile}
+            className="w-full bg-blue-500 text-white py-2 rounded-lg"
           >
-            📊 Sales Forecast Dashboard
-          </motion.h1>
+            Upload & Forecast
+          </motion.button>
+        </motion.div>
 
-          {/* UPLOAD CARD */}
+        {/* ⏳ LOADING */}
+        {loading && (
+          <div className="flex justify-center mt-6">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+
+        {/* 📈 CHART */}
+        {data.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-md mx-auto bg-white/60 backdrop-blur-lg p-6 rounded-2xl shadow-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="max-w-4xl mx-auto mt-10 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl"
           >
-            <input
-              type="file"
-              onChange={(e) => setFile(e.target.files[0])}
-              className="mb-4 w-full p-2 border rounded-lg"
-            />
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={uploadFile}
-              className="w-full bg-blue-500 text-white py-2 rounded-lg"
-            >
-              Upload & Forecast
-            </motion.button>
+            <Line data={chartData} />
           </motion.div>
+        )}
 
-          {/* ⏳ LOADING */}
-          {loading && (
-            <div className="flex justify-center mt-6">
-              <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          )}
-
-          {/* 📈 CHART */}
-          {data.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="max-w-4xl mx-auto mt-10 bg-white/60 backdrop-blur-lg p-6 rounded-2xl shadow-xl"
-            >
-              <Line data={chartData} />
-            </motion.div>
-          )}
-
-        </div>
       </div>
     </div>
   );
