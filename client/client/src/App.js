@@ -39,11 +39,29 @@ function App() {
       <button onClick={uploadFile}>Upload & Forecast</button>
 
       <ul>
-        {data.map((item, i) => (
-          <li key={i}>
-            {new Date(item.ds).toLocaleDateString()} → {Math.round(item.yhat)}
-          </li>
-        ))}
+        {Object.keys(data).length > 0 && (
+          <div className="mt-10">
+            {Object.keys(data).map((product) => (
+              <div
+                key={product}
+                className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl mb-6"
+              >
+                <h2 className="text-2xl font-bold mb-4">
+                  {product}
+                </h2>
+
+                <ul className="space-y-2">
+                  {data[product].map((item, i) => (
+                    <li key={i}>
+                      {new Date(item.ds).toLocaleDateString()} →{" "}
+                      {Math.round(item.yhat)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
       </ul>
     </div>
   );
