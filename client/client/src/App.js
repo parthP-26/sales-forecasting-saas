@@ -38,13 +38,24 @@ function App() {
 
       <button onClick={uploadFile}>Upload & Forecast</button>
 
-      <ul>
-        {data.map((item, i) => (
-          <li key={i}>
-            {new Date(item.ds).toLocaleDateString()} → {Math.round(item.yhat)}
-          </li>
-        ))}
-      </ul>
+{Object.keys(data).length > 0 && (
+  <div>
+    {Object.keys(data).map((product) => (
+      <div key={product} style={{ marginTop: 20 }}>
+        <h2>{product}</h2>
+
+        <ul>
+          {data[product].map((item, i) => (
+            <li key={i}>
+              {new Date(item.ds).toLocaleDateString()} →{" "}
+              {Math.round(item.yhat)}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+)}
     </div>
   );
 }
