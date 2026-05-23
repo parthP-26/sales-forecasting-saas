@@ -22,7 +22,7 @@ app.use(express.json());
 
 /*
 ========================================
-FILE UPLOAD
+UPLOAD CONFIG
 ========================================
 */
 
@@ -32,7 +32,7 @@ const upload = multer({
 
 /*
 ========================================
-UPLOAD + FORECAST ROUTE
+UPLOAD ROUTE
 ========================================
 */
 
@@ -59,7 +59,7 @@ app.post(
 
       /*
       ========================================
-      STORE PRODUCT DATA
+      STORE PRODUCTS
       ========================================
       */
 
@@ -74,7 +74,9 @@ app.post(
       await new Promise(
         (resolve, reject) => {
 
-          fs.createReadStream(req.file.path)
+          fs.createReadStream(
+            req.file.path
+          )
 
             .pipe(csv())
 
@@ -82,7 +84,7 @@ app.post(
 
               /*
               ========================================
-              SKIP INVALID ROWS
+              SKIP BAD ROWS
               ========================================
               */
 
@@ -100,6 +102,7 @@ app.post(
               */
 
               const product =
+
                 row.product ||
                 "Default";
 
@@ -150,7 +153,7 @@ app.post(
 
       /*
       ========================================
-      GENERATE FORECAST
+      FINAL RESULTS
       ========================================
       */
 
@@ -169,14 +172,48 @@ app.post(
 
         /*
         ========================================
-        LAST SALES VALUE
+        SKIP IF TOO SMALL
         ========================================
         */
 
-        let current =
+        if (
+          productData.length < 2
+        ) {
+          continue;
+        }
+
+        /*
+        ========================================
+        GET FIRST + LAST SALES
+        ========================================
+        */
+
+        const firstSale =
+          productData[0].sales;
+
+        const lastSale =
           productData[
             productData.length - 1
           ].sales;
+
+        /*
+        ========================================
+        CALCULATE TREND
+        ========================================
+        */
+
+        const trend =
+
+          (lastSale - firstSale) /
+          productData.length;
+
+        /*
+        ========================================
+        START FROM LAST VALUE
+        ========================================
+        */
+
+        let current = lastSale;
 
         let forecast = [];
 
@@ -194,26 +231,26 @@ app.post(
 
           /*
           ========================================
-          RANDOM FLUCTUATION
+          SMALL NATURAL VARIATION
           ========================================
           */
 
-          const fluctuation =
+          const noise =
 
             Math.floor(
-              Math.random() * 60
-            ) - 30;
+              Math.random() * 10
+            ) - 5;
 
           /*
           ========================================
-          ADD SMALL TREND
+          APPLY TREND
           ========================================
           */
 
           current =
             current +
-            fluctuation +
-            5;
+            trend +
+            noise;
 
           /*
           ========================================
@@ -229,7 +266,7 @@ app.post(
 
           /*
           ========================================
-          CREATE NEXT DATE
+          CREATE FUTURE DATE
           ========================================
           */
 
@@ -253,9 +290,8 @@ app.post(
                 .toISOString()
                 .split("T")[0],
 
-            yhat: Math.round(
-              current
-            ),
+            yhat:
+              Math.round(current),
 
           });
 
