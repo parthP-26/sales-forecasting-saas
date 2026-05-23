@@ -5,7 +5,7 @@ const API = "https://sales-forecasting-saas.onrender.com";
 
 function App() {
   const [file, setFile] = useState(null);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
 
   const uploadFile = async () => {
     if (!file) {
