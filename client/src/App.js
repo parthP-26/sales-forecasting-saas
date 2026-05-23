@@ -1,8 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+} from "react";
+
 import axios from "axios";
+
 import { motion } from "framer-motion";
 
-const API = "https://sales-forecasting-saas.onrender.com";
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+import { Line } from "react-chartjs-2";
+
+/*
+========================================
+REGISTER CHART.JS
+========================================
+*/
+
+ChartJS.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+/*
+========================================
+BACKEND API
+========================================
+*/
+
+const API =
+  "https://sales-forecasting-saas.onrender.com";
+
+/*
+========================================
+APP
+========================================
+*/
 
 function App() {
 
@@ -10,9 +57,11 @@ function App() {
 
   const [data, setData] = useState({});
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] =
+    useState(false);
 
   /*
   ========================================
@@ -23,9 +72,17 @@ function App() {
   useEffect(() => {
 
     if (darkMode) {
-      document.documentElement.classList.add("dark");
+
+      document.documentElement.classList.add(
+        "dark"
+      );
+
     } else {
-      document.documentElement.classList.remove("dark");
+
+      document.documentElement.classList.remove(
+        "dark"
+      );
+
     }
 
   }, [darkMode]);
@@ -39,7 +96,9 @@ function App() {
   const uploadFile = async () => {
 
     if (!file) {
+
       alert("Please select a file");
+
       return;
     }
 
@@ -56,7 +115,10 @@ function App() {
         formData
       );
 
-      console.log("Forecast Data:", res.data);
+      console.log(
+        "Forecast Data:",
+        res.data
+      );
 
       setData(res.data);
 
@@ -74,6 +136,58 @@ function App() {
 
     }
   };
+
+  /*
+  ========================================
+  CHART DATA
+  ========================================
+  */
+
+  const chartData = {
+
+    labels:
+      Object.keys(data).length > 0
+        ? data[
+            Object.keys(data)[0]
+          ].map((item) =>
+            new Date(
+              item.ds
+            ).toLocaleDateString()
+          )
+        : [],
+
+    datasets:
+      Object.keys(data).map(
+        (product, index) => ({
+
+          label: product,
+
+          data: data[product].map(
+            (item) =>
+              Math.round(item.yhat)
+          ),
+
+          borderColor: [
+            "#2563eb",
+            "#16a34a",
+            "#dc2626",
+            "#9333ea",
+          ][index % 4],
+
+          backgroundColor:
+            "transparent",
+
+          tension: 0.4,
+
+        })
+      ),
+  };
+
+  /*
+  ========================================
+  RETURN UI
+  ========================================
+  */
 
   return (
 
@@ -135,8 +249,14 @@ function App() {
         {/* HEADER */}
 
         <motion.h1
-          initial={{ opacity: 0, y: -40 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{
+            opacity: 0,
+            y: -40,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
           className="text-6xl font-bold text-center text-blue-600 mb-12"
         >
 
@@ -149,15 +269,23 @@ function App() {
         ======================================== */}
 
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{
+            opacity: 0,
+            y: 50,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
           className="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-10 rounded-3xl shadow-2xl"
         >
 
           <input
             type="file"
             onChange={(e) =>
-              setFile(e.target.files[0])
+              setFile(
+                e.target.files[0]
+              )
             }
             className="w-full p-4 border rounded-xl mb-6 dark:bg-gray-700"
           />
@@ -193,55 +321,81 @@ function App() {
 
           <div className="mt-12 space-y-8">
 
-            {Object.keys(data).map((product) => (
+            {Object.keys(data).map(
+              (product) => (
 
-              <motion.div
-                key={product}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl"
-              >
+                <motion.div
+                  key={product}
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl"
+                >
 
-                <h2 className="text-3xl font-bold mb-6 text-blue-500">
+                  <h2 className="text-3xl font-bold mb-6 text-blue-500">
 
-                  {product}
+                    {product}
 
-                </h2>
+                  </h2>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-2 gap-4">
 
-                  {data[product].map((item, i) => (
+                    {data[product].map(
+                      (item, i) => (
 
-                    <div
-                      key={i}
-                      className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl"
-                    >
+                        <div
+                          key={i}
+                          className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl"
+                        >
 
-                      <p className="font-semibold">
+                          <p className="font-semibold">
 
-                        {new Date(
-                          item.ds
-                        ).toLocaleDateString()}
+                            {new Date(
+                              item.ds
+                            ).toLocaleDateString()}
 
-                      </p>
+                          </p>
 
-                      <p className="text-lg">
+                          <p className="text-lg">
 
-                        Forecast:
-                        {" "}
-                        {Math.round(item.yhat)}
+                            Forecast:
+                            {" "}
+                            {Math.round(
+                              item.yhat
+                            )}
 
-                      </p>
+                          </p>
 
-                    </div>
+                        </div>
 
-                  ))}
+                      )
+                    )}
 
-                </div>
+                  </div>
 
-              </motion.div>
+                </motion.div>
 
-            ))}
+              )
+            )}
+
+            {/* ========================================
+            CHART SECTION
+            ======================================== */}
+
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl">
+
+              <h2 className="text-3xl font-bold mb-6">
+
+                📈 Forecast Analytics
+
+              </h2>
+
+              <Line data={chartData} />
+
+            </div>
 
           </div>
 
